@@ -1,4 +1,4 @@
-Title: README
+h1. README
 
 Simple site to let you know whether it is in fact, Cake Friday.
 
