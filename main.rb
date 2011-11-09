@@ -78,6 +78,6 @@ def is_cake_friday?
   
   logger.info("Checking time #{t}")
   
-  return true if t.friday? && t.day < 7
+  return true if t.friday? && t.day <= 7
   false
 end
