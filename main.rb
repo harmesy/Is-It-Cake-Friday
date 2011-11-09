@@ -40,7 +40,7 @@ template = %{
       <form name="timezone_select" method="post">
         <select name="timezone" id="timezone_list">
           <% tz_list.each do |tz| %>
-            <option <%= "selected='true'" if tz.identifier == session[:timezone] %>><%= tz.identifier %></option>
+            <option <%= "selected='true'" if tz == zone %>><%= tz %></option>
           <% end %>
           <input type="submit" name="timezone_submit" value="Try another timezone?" id="timezone_submit">
         </select>
@@ -49,7 +49,8 @@ template = %{
   </html>
 }
 
-tz_list = TZInfo::Timezone.all
+TZ_LIST = TZInfo::Timezone.all_country_zone_identifiers
+DEFAULT_ZONE = 'America/Halifax'
 
 get '/' do
   if is_cake_friday?
@@ -60,7 +61,7 @@ get '/' do
     @tag_line = "Sorry, it's not Cake Friday yet."
   end
   
-  erb(template, locals: {tz_list: tz_list})
+  erb(template, locals: {tz_list: TZ_LIST, zone: session[:timezone] || DEFAULT_ZONE})
 end
 
 post '/' do
@@ -71,11 +72,8 @@ post '/' do
 end
 
 def is_cake_friday?
-  if session[:timezone]
-    t = TZInfo::Timezone.get(session[:timezone]).utc_to_local(Time.now.utc)
-  else
-    t = Time.now
-  end
+  tz = session[:timezone] || DEFAULT_ZONE
+  t = TZInfo::Timezone.get(tz).utc_to_local(Time.now.utc)
   
   logger.info("Checking time #{t}")
   
