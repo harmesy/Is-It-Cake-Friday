@@ -49,7 +49,7 @@ template = %{
   </html>
 }
 
-TZ_LIST = TZInfo::Timezone.all_country_zone_identifiers
+TZ_LIST = TZInfo::Timezone.all_country_zone_identifiers.sort.map { |i| i.gsub('_', ' ') }
 DEFAULT_ZONE = 'America/Halifax'
 
 get '/' do
@@ -73,7 +73,7 @@ end
 
 def is_cake_friday?
   tz = session[:timezone] || DEFAULT_ZONE
-  t = TZInfo::Timezone.get(tz).utc_to_local(Time.now.utc)
+  t = TZInfo::Timezone.get(tz.gsub(' ', '_')).utc_to_local(Time.now.utc)
   
   logger.info("Checking time #{t}")
   
